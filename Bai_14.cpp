@@ -1,53 +1,74 @@
 #include <iostream>
 #include <vector>
+#include <climits>
+#include <cstdlib>
 using namespace std;
 
-struct Point { long long x, y; };
+struct Point {
+    long long x, y;
+};
 
-long long cross(const Point& a, const Point& b) {
-    return a.x * b.y - a.y * b.x; 
+long long triangleArea(Point a, Point b, Point c) {
+    return abs((b.x - a.x) * (c.y - a.y) - (c.x - a.x) * (b.y - a.y));
+}
+
+long long polygonArea(vector<Point> &points) {
+    long long area = 0;
+    int n = points.size();
+    for (int i = 0; i < n; ++i) {
+        int j = (i + 1) % n;
+        area += points[i].x * points[j].y;
+        area -= points[j].x * points[i].y;
+    }
+    return abs(area);
 }
 
 int main() {
     int n; cin >> n;
-    vector<Point> p(2 * n + 1);
-    for (int i = 1; i <= n; i++) {
-        cin >> p[i].x >> p[i].y;
-        p[i + n] = p[i]; // nhân đôi
+    vector<Point> polygon(n);
+    for (int i = 0; i < n; ++i) {
+        cin >> polygon[i].x >> polygon[i].y;
     }
-    
-    // prefix area
-    vector<long long> pref(2 * n + 1, 0);
-    for (int i = 1; i < 2 * n; i++) {
-        pref[i + 1] = pref[i] + cross(p[i], p[i + 1]);
-    }
-    long long total = llabs(pref[n + 1] - pref[1]);
-    long long best = LLONG_MAX;
-    int ans_i = 1, ans_j = 3;
-    
-    for (int i = 1; i <= n; i++) {
-        int j = i + 2;
-        while (j <= i + n - 2) {
-            long long cur  = llabs(pref[j] - pref[i] + cross(p[j], p[i]));
-            long long diff = llabs(total - 2 * cur);
 
-            if (diff < best) {
-                best = diff;
-                ans_i = i;
-                ans_j = j;
+    long long totalArea = polygonArea(polygon);
+    long long bestDiff = totalArea;
+    int bestI = 0, bestJ = 2;
+
+    for (int i = 0; i < n; ++i) {
+        long long currentArea = triangleArea(polygon[i], polygon[(i + 1) % n], polygon[(i + 2) % n]);
+        int j = (i + 2) % n;
+        while (true) {
+            int nextJ = (j + 1) % n;
+            if (nextJ == i) break;
+
+            long long addArea = triangleArea(polygon[i], polygon[j], polygon[nextJ]);
+            long long currentDiff = abs(totalArea - 2 * currentArea);
+            long long nextDiff = abs(totalArea - 2 * (currentArea + addArea));
+
+            if (currentDiff < bestDiff) {
+                bestDiff = currentDiff;
+                bestI = i;
+                bestJ = j;
             }
 
-            long long next = llabs(pref[j + 1] - pref[i] + cross(p[j + 1], p[i]));
-            if (llabs(total - 2 * next) > diff) break;
+            if (nextDiff <= currentDiff) {
+                currentArea += addArea;
+                j = nextJ;
+            }
+            else {
+                if (nextDiff < bestDiff) {
+                    bestDiff = nextDiff;
+                    bestI = i;
+                    bestJ = j;
+                }
+                
+                break;
+            }
 
-            j++;
         }
     }
 
-    ans_i = (ans_i - 1) % n + 1;
-    ans_j = (ans_j - 1) % n + 1;
-
-    cout << ans_i << " " << ans_j << "\n";
+    cout << bestI + 1 << ' ' << bestJ + 1 << '\n';
+    
     return 0;
 }
-
