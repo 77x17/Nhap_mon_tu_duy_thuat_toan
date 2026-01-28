@@ -26,4 +26,8 @@ int main() {
     return 0;
 }
 
-// Nếu k <= n <= 10^5, ta có thể sử dụng cấu trúc dữ liệu Segment Tree để tối ưu việc tính GCD trong khoảng [i, i+k-1].
+// Độ phức tạp: O(n * k)
+
+// Nếu k <= n <= 10^5, ta có thể sử dụng cấu trúc dữ liệu Segment Tree hoặc bảng thưa để tối ưu việc tính GCD trong khoảng [i, i+k-1].
+// Độ phức tạp: O(n log n) với Segment Tree hoặc O(n log n) để xây dựng bảng thưa và O(n) để truy vấn.
+
