@@ -49,11 +49,12 @@ int main() {
             if (r < l) r = l;
 
             // Mở rộng r sao cho góc < pi
-            while (r + 1 < l + m &&
-                   angles[r + 1].first - angles[l].first < PI) {
+            while (r + 1 < l + m && angles[r + 1].first - angles[l].first < PI) {
                 r++;
             }
-
+            
+            // Số điểm nằm lọt thỏm trong cái quạt (nhỏ hơn 180 độ)
+            // Chính là số điểm nằm về "một phía" của đường thẳng nối A và điểm l
             int cnt = r - l; // số điểm nằm bên trái
 
             if (cnt == need) {

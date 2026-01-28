@@ -21,7 +21,6 @@ int main() {
         double intersection =
             2 * R * R * acos(d / (2 * R))
             - 0.5 * d * sqrt(4 * R * R - d * d);
-
         area = 2 * PI * R * R - intersection;
     }
 
